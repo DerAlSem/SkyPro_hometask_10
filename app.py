@@ -1,36 +1,19 @@
-from flask import Flask
+from flask import Flask, render_template
 import helpers
 
 app = Flask(__name__)
 @app.route("/")
 def page_index():
-    '''
-    Главная страница
-    :return:
-    '''
-    candidates = helpers.get_all()
-    text = "<pre>"
-    for candidate in candidates:
-        text += f"Имя кандидата - {candidate['name']}\n"
-        text += f"Позиция кандидата - {candidate['position']}\n"
-        text += candidate['skills'] + "\n\n"
-    text += "</pre>"
-    return text
+  return render_template('list.html', candidates = helpers.get_all())
 
 @app.route("/candidate/<int:pk>")
 def page_candidate(pk):
     '''
-    Страница с поиском кандидатов по pk
+    Карточки кандидатов по pk
     :param pk:
     :return:
     '''
-    candidate = helpers.get_by_pk(pk)
-    text = f"<img src = '"\
-           f"{candidate['picture']}'>\n"\
-           f"<pre>Имя кандидата - {candidate['name']}\n"\
-           f"Позиция кандидата - {candidate['position']}\n" \
-           f"{candidate['skills']}</pre>"
-    return text
+    return render_template('card.html', candidate = helpers.get_by_pk(pk))
 
 @app.route("/skill/<skill>")
 def page_skills(skill):
@@ -40,13 +23,6 @@ def page_skills(skill):
     :return:
     '''
     candidates = helpers.get_by_skill(skill.lower())
-    print(candidates)
-    text = "<pre>"
-    for candidate in candidates:
-        text += f"Имя кандидата - {candidate['name']}\n"
-        text += f"Позиция кандидата - {candidate['position']}\n"
-        text += candidate['skills'] + "\n\n"
-    text += "</pre>"
-    return text
+    return render_template("skill.html", candidates = candidates, amount = len(candidates) )
 
 app.run()
